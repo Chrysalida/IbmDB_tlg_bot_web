@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Public webhook version
+"""
 
 
 from flask import Flask,request
