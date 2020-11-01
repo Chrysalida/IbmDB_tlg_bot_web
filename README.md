@@ -1,2 +1,3 @@
-# IbmDB_tlg_bot_web
-Telegram-bot made to request IBM_db2 cloud DB. 
+Telegram bot sending SQL requests to a IBMdb2 database depending on user's message. 
+This is a webhook version. 
+This is a puplic version, all sensitive information have been removed or imitated.
