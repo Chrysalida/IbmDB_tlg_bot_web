@@ -35,7 +35,7 @@ allLanguages={'eng': 'английский','deu': 'немецкий',
 
 
 @bot.message_handler(content_types=['text'])
-def get_text_messages(message):
+def get_text_messages(message)
     mess=""
     mess = message.text.lower()
     if mess in hi_list:
@@ -52,6 +52,91 @@ def get_text_messages(message):
         bot.send_message(message.from_user.id,
                         "Напишите /lang, чтобы получить список языков")
         print('User asked me for help')
+
+    elif message.text in Tra_list:
+        dsn='DRIVER={IBM DB2 ODBC DRIVER};DATABASE=BLUDB;HOSTNAME=<YOUR HOSTNAME>;PORT=50000;PROTOCOL=TCPIP;UID=<YOUR UID>;PWD=<YOUR PWD>'
+
+        try:
+            conn = ibm_db.connect(dsn, "", "")
+            print ("Connected to database")
+            #bot.send_message(message.from_user.id,"Database connection established")
+        except:
+            print ("Unable to connect: ", ibm_db.conn_errormsg() )
+            bot.send_message(message.from_user.id,"Sorry, the database seems to be unavailable")
+
+        selectQuery = "select * from TRANSLATORS where L_NAME like '%"+message.text+"%'"
+
+        selectStmt2 = ibm_db.exec_immediate(conn, selectQuery)
+
+        while ibm_db.fetch_row(selectStmt2) != False:
+            print (
+            " TYPE: ",  ibm_db.result(selectStmt2, 0), " Last name: ",
+              ibm_db.result(selectStmt2, "L_NAME"),
+               'First_name: ', ibm_db.result(selectStmt2, "F_NAME", )
+               )
+
+            bot.send_message(
+            message.from_user.id, str(ibm_db.result(selectStmt2, 0))+' '+str(ibm_db.result(selectStmt2, 1))+
+            ' '+str(ibm_db.result(selectStmt2,2))+' \n'+str(ibm_db.result(selectStmt2,3))+
+            '\n'+str(ibm_db.result(selectStmt2,4))+'\n '+str(ibm_db.result(selectStmt2,5))
+                    )
+    elif mess in allLanguages.keys():
+        dsn='DRIVER={IBM DB2 ODBC DRIVER};DATABASE=BLUDB;HOSTNAME=<YOUR HOSTNAME>;PORT=50000;PROTOCOL=TCPIP;UID=<YOUR UID>;PWD=<YOUR PWD>'
+
+        try:
+            conn = ibm_db.connect(dsn, "", "")
+            print ("Connected to database")
+            #bot.send_message(message.from_user.id,"Database connection established")
+        except:
+            print ("Unable to connect: ", ibm_db.conn_errormsg() )
+            bot.send_message(message.from_user.id,"Sorry, the database seems to be unavailable")
+
+        selectQuery = "select * from TRANSLATORS where LANG like '%"+mess.upper()+"%'"
+
+        selectStmt2 = ibm_db.exec_immediate(conn, selectQuery)
+        while ibm_db.fetch_row(selectStmt2) != False:
+            print (
+                    " TYPE: ",  ibm_db.result(selectStmt2, 0),
+                     " Last name: ",  ibm_db.result(selectStmt2, "L_NAME"),
+                      'First_name: ', ibm_db.result(selectStmt2, "F_NAME", )
+                    )
+            bot.send_message(
+            message.from_user.id, str(ibm_db.result(selectStmt2,0))+' '+str(ibm_db.result(selectStmt2,1))+
+            ' '+str(ibm_db.result(selectStmt2,2))+' \n'+str(ibm_db.result(selectStmt2,3))+' \n'+str(ibm_db.result(selectStmt2,4))+
+            '\n'+str(ibm_db.result(selectStmt2,5))
+            )
+    elif len(message.text)==7 and mess[:3] in allLanguages.keys(): #Move out into a sep function
+        dsn='DRIVER={IBM DB2 ODBC DRIVER};DATABASE=BLUDB;HOSTNAME=<YOUR HOSTNAME>;PORT=50000;PROTOCOL=TCPIP;UID=<YOUR UID>;PWD=<YOUR PWD>'
+
+        try:
+            conn = ibm_db.connect(dsn, "", "")
+            print ("Connected to database")
+            #bot.send_message(message.from_user.id,"Database connection established")
+        except:
+            print ("Unable to connect: ", ibm_db.conn_errormsg() )
+            bot.send_message(message.from_user.id,"Sorry, the database seems to be unavailable")
+
+        selectQuery = "select * from TRANSLATORS where LANG like '%"+mess.upper()+"%'"
+
+        selectStmt2 = ibm_db.exec_immediate(conn, selectQuery)
+        while ibm_db.fetch_row(selectStmt2) != False:
+            print (
+                    " TYPE: ",  ibm_db.result(selectStmt2, 0),
+                     " Last name: ",  ibm_db.result(selectStmt2, "L_NAME"),
+                      'First_name: ', ibm_db.result(selectStmt2, "F_NAME", )
+                    )
+            bot.send_message(
+            message.from_user.id, str(ibm_db.result(selectStmt2,0))+' '+str(ibm_db.result(selectStmt2,1))+
+            ' '+str(ibm_db.result(selectStmt2,2))+' \n'+str(ibm_db.result(selectStmt2,3))+' \n'+str(ibm_db.result(selectStmt2,4))+
+            '\n'+str(ibm_db.result(selectStmt2,5)))
+
+    elif message.text=='/lang':
+        for item in allLanguages:
+            code=str(item)
+            code=code.upper()
+            response=''
+            response=allLanguages[item]+': '+code
+            bot.send_message(message.from_user.id,response)
 
     else:
         bot.send_message(message.from_user.id,'Sorry, dear {}! \n I cannot understand you'.format(message.chat.first_name))
