@@ -80,7 +80,9 @@ def get_text_messages(message)
             ' '+str(ibm_db.result(selectStmt2,2))+' \n'+str(ibm_db.result(selectStmt2,3))+
             '\n'+str(ibm_db.result(selectStmt2,4))+'\n '+str(ibm_db.result(selectStmt2,5))
                     )
-          ibm_db.close(conn)
+        ibm_db.close(conn)
+          
+          
     elif mess in allLanguages.keys():
         dsn='DRIVER={IBM DB2 ODBC DRIVER};DATABASE=BLUDB;HOSTNAME=<YOUR HOSTNAME>;PORT=50000;PROTOCOL=TCPIP;UID=<YOUR UID>;PWD=<YOUR PWD>'
 
@@ -106,7 +108,9 @@ def get_text_messages(message)
             ' '+str(ibm_db.result(selectStmt2,2))+' \n'+str(ibm_db.result(selectStmt2,3))+' \n'+str(ibm_db.result(selectStmt2,4))+
             '\n'+str(ibm_db.result(selectStmt2,5))
             )
-         ibm_db.close(conn)
+        ibm_db.close(conn)
+        
+        
     elif len(message.text)==7 and mess[:3] in allLanguages.keys(): #Move out into a sep function
         dsn='DRIVER={IBM DB2 ODBC DRIVER};DATABASE=BLUDB;HOSTNAME=<YOUR HOSTNAME>;PORT=50000;PROTOCOL=TCPIP;UID=<YOUR UID>;PWD=<YOUR PWD>'
 
@@ -132,6 +136,8 @@ def get_text_messages(message)
             ' '+str(ibm_db.result(selectStmt2,2))+' \n'+str(ibm_db.result(selectStmt2,3))+' \n'+str(ibm_db.result(selectStmt2,4))+
             '\n'+str(ibm_db.result(selectStmt2,5)))
         ibm_db.close(conn)
+        
+        
     elif message.text=='/lang':
         for item in allLanguages:
             code=str(item)
@@ -139,11 +145,13 @@ def get_text_messages(message)
             response=''
             response=allLanguages[item]+': '+code
             bot.send_message(message.from_user.id,response)
+            
 
     else:
         bot.send_message(message.from_user.id,'Sorry, dear {}! \n I cannot understand you'.format(message.chat.first_name))
         bot.send_message(message.from_user.id,'I would recommend to ask for /help')
         print('User wrote: ',message.text)
+        
 
 @server.route('/'+TOKEN,methods=['POST'])
 def getMessage():
